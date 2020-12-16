@@ -1,0 +1,145 @@
+[
+  [
+    {
+      "name": "北部",
+      "child": [
+        {
+          "che": "臺北市",
+          "eng": "taipei"
+        },
+        {
+          "che": "新北市",
+          "eng": "newtaipai"
+        },
+        {
+          "che": "桃園市",
+          "eng": "taoyuan"
+        },
+        {
+          "che": "基隆市",
+          "eng": "keelung"
+        },
+        {
+          "che": "新竹縣",
+          "eng": "hsinchu_county"
+        },
+        {
+          "che": "新竹市",
+          "eng": "hsinchu"
+        },
+        {
+          "che": "宜蘭縣",
+          "eng": "yilan"
+        }
+      ]
+    },
+    {
+      "name": "中部",
+      "child": [
+        {
+          "che": "臺中市",
+          "eng": "taichung"
+        },
+        {
+          "che": "苗栗縣",
+          "eng": "miaoli_county"
+        },
+        {
+          "che": "彰化縣",
+          "eng": "changhua_county"
+        },
+        {
+          "che": "南投縣",
+          "eng": "nantou_county"
+        },
+        {
+          "che": "雲林縣",
+          "eng": "yunlin_county"
+        }
+      ]
+    },
+    {
+      "name": "南部",
+      "child": [
+        {
+          "che": "嘉義市",
+          "eng": "chiayi"
+        },
+        {
+          "che": "嘉義縣",
+          "eng": "chiayi_county"
+        },
+        {
+          "che": "臺南市",
+          "eng": "tainai"
+        },
+        {
+          "che": "高雄市",
+          "eng": "kaohsiung"
+        },
+        {
+          "che": "屏東縣",
+          "eng": "pingtung_county"
+        }
+      ]
+    },
+
+    {
+      "name": "東部",
+      "child": [
+        {
+          "che": "花蓮縣",
+          "eng": "hualien_county"
+        },
+        {
+          "che": "臺東縣",
+          "eng": "taitung_county"
+        }
+      ]
+    },
+    {
+      "name": "外島",
+      "child": [
+        {
+          "che": "澎湖縣",
+          "eng": "penghu_county"
+        },
+        {
+          "che": "連江縣",
+          "eng": "lianjiang_county"
+        },
+        {
+          "che": "金門縣",
+          "eng": "kinmen_county"
+        }
+      ]
+    }
+  ],
+  [
+    {
+      "台灣": "taiwan",
+      "臺北市": "taipei",
+      "新北市": "newtaipai",
+      "桃園市": "taoyuan",
+      "臺中市": "taichung",
+      "臺南市": "tainai",
+      "高雄市": "kaohsiung",
+      "基隆市": "keelung",
+      "新竹市": "hsinchu",
+      "嘉義市": "chiayi",
+      "嘉義縣": "chiayi_county",
+      "新竹縣": "hsinchu_county",
+      "苗栗縣": "miaoli_county",
+      "彰化縣": "changhua_county",
+      "南投縣": "nantou_county",
+      "雲林縣": "yunlin_county",
+      "屏東縣": "pingtung_county",
+      "宜蘭縣": "yilan",
+      "花蓮縣": "hualien_county",
+      "臺東縣": "taitung_county",
+      "澎湖縣": "penghu_county",
+      "連江縣": "lianjiang_county",
+      "金門縣": "kinmen_county"
+    }
+  ]
+]

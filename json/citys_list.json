@@ -141,5 +141,32 @@
       "連江縣": "lianjiang_county",
       "金門縣": "kinmen_county"
     }
+  ],
+  [
+    {
+      "taiwan": "台灣",
+      "taipei": "臺北市",
+      "newtaipai": "新北市",
+      "taoyuan": "桃園市",
+      "taichung": "臺中市",
+      "tainai": "臺南市",
+      "kaohsiung": "高雄市",
+      "keelung": "基隆市",
+      "hsinchu": "新竹市",
+      "chiayi": "嘉義市",
+      "chiayi_county": "嘉義縣",
+      "hsinchu_county": "新竹縣",
+      "miaoli_county": "苗栗縣",
+      "changhua_county": "彰化縣",
+      "nantou_county": "南投縣",
+      "yunlin_county": "雲林縣",
+      "pingtung_county": "屏東縣",
+      "yilan": "宜蘭縣",
+      "hualien_county": "花蓮縣",
+      "taitung_county": "臺東縣",
+      "penghu_county": "澎湖縣",
+      "lianjiang_county": "連江縣",
+      "kinmen_county": "金門縣"
+    }
   ]
 ]

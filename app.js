@@ -11,12 +11,14 @@ app.use(express.json());
 //資料
 const city_json = require('./json/citys_list.json')
 const dist_json = require('./json/dist_list.json')
-const city_list_json = city_json[1]
 
 
 //引入
 const get_weather = require('./part/get_weather')
 const sub = require('./part/sub')
+const bind = require('./part/bind')
+const other = require('./part/other')
+
 
 
 //api_key
@@ -78,23 +80,6 @@ function start(api_key) {
 
 
 
-
-    const inline_keyboard = {
-
-        keyborad: [[
-            { text: '台南市' },
-            { text: '台北市' }
-        ],
-        [{ text: '北部' },
-        { text: '中部' },
-        { text: '南部' },
-        { text: '東部/外島' }
-        ]]
-
-    }
-
-
-
     bot.on('message', (msg) => {
 
         const city_button = {
@@ -104,7 +89,7 @@ function start(api_key) {
                 keyboard: [
                     [
                         { text: '台南市' },
-                        { text: '第一排之二' }
+                        { text: 'get' }
                     ],
                     [
                         { text: '北' },
@@ -123,7 +108,7 @@ function start(api_key) {
 
     //判斷鄉鎮
 
-    bot.onText(/(區)|(鎮)|(市)|(縣)|(鄉)/, msg => {
+    bot.onText(/(區)|(鎮)|(市)|(縣)|(鄉)/, async msg => {
 
 
         msg.text = msg.text.replace('台', '臺')
@@ -133,13 +118,17 @@ function start(api_key) {
         const check_city = Object.keys(city_json[1][0]).some(e => e == msg.text);
 
 
-        const town_data = msg.text.split('.')
+        const town_data = msg.text.split('/')
 
 
 
         // 鄉鎮
         if (!check_city) {
-            get_weather.town_weatger(msg.chat.id, town_data[0], town_data[1])
+
+            const result = await get_weather.town_weatger(town_data[0], town_data[1])
+
+            bot.sendMessage(msg.chat.id, result.weather_info, result.button);
+
 
         }
 
@@ -147,7 +136,11 @@ function start(api_key) {
 
         if (check_city) {
 
-            get_weather.city_weatger(msg.chat.id, msg.text)
+            const result = await get_weather.city_weatger(msg.text)
+
+            bot.sendMessage(msg.chat.id, result.weather_info, result.button);
+
+
         }
 
 
@@ -156,8 +149,8 @@ function start(api_key) {
     )
 
 
-    //回調判斷
-    bot.on('callback_query', function onCallbackQuery(callbackQuery) {
+    /* 回調判斷 */
+    bot.on('callback_query', async function onCallbackQuery(callbackQuery) {
 
 
         const callback_text = callbackQuery.data.split('-')
@@ -167,60 +160,23 @@ function start(api_key) {
 
             const action = callback_text[2] + '天氣 '
             const msg = callbackQuery.message;
-            const opts = {
-                chat_id: msg.chat.id,
-                message_id: msg.message_id
-            };
-            bot.editMessageText(null, opts);
-            get_weather.town_weatger(msg.chat.id, callback_text[1], callback_text[2])
+
+            bot.deleteMessage(msg.chat.id, msg.message_id);
+
+            const result = await get_weather.town_weatger(callback_text[1], callback_text[2])
+
+            bot.sendMessage(msg.chat.id, result.weather_info, result.button);
+
 
         }
 
 
-        //縣市回調
-        else if (callback_text[0] == 'city') {
-
-
-            //處理鄉鎮資訊
-            let dist_data
-            dist_json.forEach(e => {
-                if (e.name == callback_text[1])
-                    dist_data = e.dist
-            })
-
-
-            let dist_button = []
-
-            dist_data.forEach(e => {
-
-                dist_button.push({
-                    text: e,
-                    callback_data: 'town-' + callback_text[1] + '-' + e
-                })
-
-            });
-
-            const dist_button_length = dist_button.length
-
-            let dist_line_button = []
-
-            for (let i = 0; i < dist_button_length / 3; i++) {
-                dist_line_button.push(dist_button.splice(0, 3))
-            }
-
-            //處理鄉鎮資訊
+        //縣市回調(查看鄉鎮)
+        if (callback_text[0] == 'city') {
 
             const msg = callbackQuery.message;
 
-
-            const button = {
-                reply_markup: {
-                    remove_keyboard: true,
-                    inline_keyboard: dist_line_button
-
-                }
-            }
-
+            const button = other.get_towns(callback_text[1])
 
             bot.sendMessage(msg.chat.id, "『" + callback_text[1] + '』的鄉鎮天氣', button)
 
@@ -228,12 +184,50 @@ function start(api_key) {
         }
 
         //訂閱回調
-        else if (callback_text[0] == 'sub') {
+        if (callback_text[0] == 'sub') {
 
             //處理鄉鎮資訊
             const msg = callbackQuery.message;
 
-            sub.add_sub(msg.chat.id, callback_text[1] + "-" + callback_text[2])
+            const result = await sub.add_sub(msg.chat.id, callback_text[1] + "-" + callback_text[2])
+
+            bot.sendMessage(msg.chat.id, result);
+
+        }
+
+
+        //訂閱回調刪除
+        if (callback_text[0] == 'sub_delete') {
+
+            const msg = callbackQuery.message;
+
+            const result = await sub.delete_sub(msg.chat.id, callback_text[1])
+
+            bot.sendMessage(msg.chat.id, result);
+
+
+        }
+
+
+        //獲取天氣回調
+        if (callback_text[0] == 'get') {
+
+            const msg = callbackQuery.message;
+
+            const get_data = callback_text[1].split('/')
+
+
+
+            let result
+
+            if (get_data[1] == null) {
+                result = await get_weather.city_weatger(get_data[0])
+            }
+            else {
+                result = await get_weather.city_weatger(get_data[0], get_data[1])
+            }
+
+            bot.sendMessage(msg.chat.id, result.weather_info, result.button);
 
 
         }
@@ -243,17 +237,45 @@ function start(api_key) {
 
 
 
-    bot.onText(/(新增帳號)/, msg => {
+    //綁定
+    bot.onText(/(TG@)/, async msg => {
+
+        const result = await bind.user_bind(msg.chat.id, msg.text)
+
+        bot.sendMessage(msg.chat.id, result)
+
+    })
 
 
-        msg.text = msg.text.replace('台', '臺')
+
+    //解除綁定
+    bot.onText(/(TG#un_bind)/, async msg => {
+
+        const result = await bind.user_un_bind(msg.chat.id)
+
+        bot.sendMessage(msg.chat.id, result);
+
+    })
 
 
-        sub.add_sub(msg.chat.id, '/taiwan')
+    //獲取訂閱
+    bot.onText(/(get)/, async msg => {
 
-    }
+        const button = await sub.get_sub(msg.chat.id)
 
-    )
+        if (button) {
+            bot.sendMessage(msg.chat.id, '當前訂閱資料', button)
+        }
+        else {
+            bot.sendMessage(msg.chat.id, '獲取訂閱失敗')
+
+        }
+
+
+
+    })
 
 
 }
+
+

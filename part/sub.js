@@ -7,6 +7,8 @@ const city_json = require('../json/citys_list.json')
 const dist_json = require('../json/dist_list.json');
 const { resolve } = require('bluebird');
 
+//api 
+const api_key = require('../api_key.json')
 
 
 
@@ -44,7 +46,7 @@ module.exports = {
 
 
 
-        const response = await axios.put("http://127.0.0.1:5000/telegtam/sub", data)
+        const response = await axios.put(`${api_key.api_url}telegtam/sub`, data)
 
         if (response["data"])
             return `『${sub_data}』訂閱成功`
@@ -81,7 +83,7 @@ module.exports = {
         //城市中英
         sub_data[0] = city_json[2][0][sub_data[0]]
 
-        const response = await axios.delete("http://127.0.0.1:5000/telegtam/sub", { data })
+        const response = await axios.delete(`${api_key.api_url}telegtam/sub`, { data })
 
         if (response["data"])
 
@@ -98,7 +100,7 @@ module.exports = {
 
     get_sub: async function (telegram_id) {
 
-        const response = await axios.get(`http://127.0.0.1:5000/telegtam/sub/${telegram_id}`)
+        const response = await axios.get(`${api_key.api_url}telegtam/sub/${telegram_id}`)
 
         if (response['data'] != null) {
 

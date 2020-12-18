@@ -5,22 +5,28 @@ const axios = require('axios');
 //資料
 const city_json = require('../json/citys_list.json')
 const dist_json = require('../json/dist_list.json')
-
 const city_list_json = city_json[1]
+
+//api 
+const api_key = require('../api_key.json')
 
 
 module.exports = {
 
+
+
     city_weatger: async function (city_name) {
 
 
-
-        const response = await axios.get("https://weather-api.ninull.com/city/taiwan")
+        const response = await axios.get(`${api_key.api_url}city/taiwan`)
 
 
         let w_data = response["data"].filter(
             (x) => x.cityname === city_name
         )
+
+
+
 
         if (w_data[0] != null) {
             //按鈕
@@ -28,7 +34,7 @@ module.exports = {
                 reply_markup: {
                     remove_keyboard: true,
                     inline_keyboard: [
-                        [{ text: '網站查看圖表', url: 'https://weather.ninull.com/#/weather/' + w_data[0].cityname_eng }],
+                        [{ text: '網站查看圖表', url: `${api_key.site_url}${w_data[0].cityname_eng} ` }],
                         [{ text: '查看鄉鎮', callback_data: 'city-' + city_name }],
                         [{ text: '訂閱', callback_data: 'sub-' + city_name }]
                     ]
@@ -64,14 +70,12 @@ module.exports = {
         city_eng = city_list_json[0][city]
 
 
-        const response = await axios.get("http://weather-api.ninull.com/city/" + city_eng)
+        const response = await axios.get(`${api_key.api_url}city/${city_eng}`)
         let w_data = response["data"].filter(
             (x) => x.cityname === town)
 
         //中文url編碼
-        let town_url = 'https://weather.ninull.com/#/weather/' + city_eng + '/' + town
-
-
+        let town_url = `${api_key.site_url}${city_eng}/${town}`
         town_url = encodeURI(town_url)
 
         if (w_data[0] != null) {

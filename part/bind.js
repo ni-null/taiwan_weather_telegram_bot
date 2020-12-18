@@ -1,5 +1,7 @@
 const axios = require('axios');
 
+//api 
+const api_key = require('../api_key.json')
 
 
 module.exports = {
@@ -11,7 +13,7 @@ module.exports = {
             bind_code: bind_code
         }
 
-        const response = await axios.post("http://127.0.0.1:5000/telegtam/bind", data)
+        const response = await axios.post(`${api_key.api_url}telegtam/bind`, data)
 
         return response["data"]
 
@@ -25,7 +27,7 @@ module.exports = {
         }
 
 
-        const response = await axios.delete("http://127.0.0.1:5000/telegtam/bind", { data })
+        const response = await axios.delete(`${api_key.api_url}telegtam/bind`, { data })
 
 
         return response["data"]

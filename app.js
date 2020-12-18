@@ -21,10 +21,6 @@ const other = require('./part/other')
 
 
 
-//api_key
-
-
-
 //讀取api_key
 fs.open("./api_key.json", function (err, fd) {
     if (err != null) {

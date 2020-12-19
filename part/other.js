@@ -3,9 +3,9 @@
 //資料
 const city_json = require('../json/citys_list.json')
 const dist_json = require('../json/dist_list.json')
+const fs = require("fs");
 
-
-const city_list_json = city_json[1]
+const city_list_json = city_json[0]
 
 
 
@@ -47,7 +47,73 @@ module.exports = {
 
         return button
 
+    }
 
+    ,
+
+    creat_api_key: function () {
+        fs.open("./api_key.json", function (err, fd) {
+
+            if (err) {
+                fs.appendFile("./api_key.json", "", function (err) {
+                    if (err) console.log(err);
+                });
+                const json = JSON.stringify(
+                    {
+                        "TOKEN": "",
+                        "url": "",
+                        "api_url": "",
+                        "site_url": ""
+                    }
+
+                );
+                fs.writeFile('./api_key.json', json, function (err) {
+                    if (err)
+                        console.log(err);
+                    else
+                        console.log("已經創建『api_key.json』請於裡面添加連接資訊");
+                });
+
+            }
+        });
+    }
+    ,
+    get_city_button: function (msg_text) {
+
+
+
+        let child
+        city_list_json.forEach(e => {
+            if (e.name == msg_text)
+                child = e.child
+        });
+
+
+        let data = []
+
+        child.forEach(e => {
+            data.push({
+                text: e.che,
+                callback_data: 'city-' + e.che
+            })
+        }
+        );
+
+        const data_length = data.length
+        let data_button = []
+        for (let i = 0; i < data_length / 3; i++) {
+            //每次刪除三個
+            data_button.push(data.splice(0, 3))
+        }
+
+        const button = {
+            reply_markup: {
+                inline_keyboard: data_button
+            }
+        }
+
+
+        return button
 
     }
 

@@ -21,6 +21,15 @@ module.exports = {
     }
     ,
 
+    user_bind_status: async function (telegram_id) {
+
+        const response = await axios.get(`${api_key.api_url}telegtam/bind/${telegram_id}`)
+
+        return response["data"]
+
+
+    }
+    ,
     user_un_bind: async function (telegram_id) {
         const data = {
             telegram_id: telegram_id,

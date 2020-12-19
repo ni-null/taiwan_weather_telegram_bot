@@ -115,13 +115,13 @@ module.exports = {
 
                 if (e_sub[1] != null)
                     user_sub.push([
-                        { text: e_sub_che + "/" + e_sub[1], callback_data: 'get-' + e_sub_che + "/" + e_sub[1] },
+                        { text: e_sub_che + "/" + e_sub[1], callback_data: 'get_weather-' + e_sub_che + "/" + e_sub[1] },
                         { text: '刪除訂閱', callback_data: 'sub_delete-' + e_sub[0] + "/" + e_sub[1] },
                     ])
                 else {
                     user_sub.push(
                         [
-                            { text: e_sub_che, callback_data: 'get-' + e_sub_che },
+                            { text: e_sub_che, callback_data: 'get_weather-' + e_sub_che },
                             { text: '刪除訂閱', callback_data: 'sub_delete-' + e_sub[0] },
                         ]
 

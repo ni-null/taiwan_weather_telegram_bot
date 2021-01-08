@@ -112,7 +112,7 @@ bot.on('callback_query', async function onCallbackQuery(callbackQuery) {
     const callback_text = callbackQuery.data.split('-')
 
 
-    //鄉鎮回調
+    //鄉鎮
     if (callback_text[0] == 'town') {
 
         const action = callback_text[2] + '天氣 '
@@ -128,32 +128,34 @@ bot.on('callback_query', async function onCallbackQuery(callbackQuery) {
     }
 
 
-    //縣市回調(查看鄉鎮)
+    //縣市(查看鄉鎮)
     if (callback_text[0] == 'city') {
 
         const msg = callbackQuery.message;
 
         const button = other.get_towns(callback_text[1])
 
+        bot.deleteMessage(msg.chat.id, msg.message_id);
+
         bot.sendMessage(msg.chat.id, "『" + callback_text[1] + '』的鄉鎮天氣', button)
 
 
     }
 
-    //訂閱回調
+    //訂閱
     if (callback_text[0] == 'sub') {
 
-        //處理鄉鎮資訊
+
         const msg = callbackQuery.message;
 
-        const result = await sub.add_sub(msg.chat.id, callback_text[1] + "-" + callback_text[2])
+        const result = await sub.add_sub(msg.chat.id, callback_text[1] + "-" + callback_text[2], msg.chat.username)
 
         bot.sendMessage(msg.chat.id, result);
 
     }
 
 
-    //訂閱回調刪除
+    //訂閱刪除
     if (callback_text[0] == 'sub_delete') {
 
         const msg = callbackQuery.message;
@@ -171,22 +173,25 @@ bot.on('callback_query', async function onCallbackQuery(callbackQuery) {
     }
 
 
-    //獲取天氣回調
+    //獲取天氣
     if (callback_text[0] == 'get_weather') {
 
         const msg = callbackQuery.message;
 
         const get_data = callback_text[1].split('/')
 
+        bot.deleteMessage(msg.chat.id, msg.message_id);
 
 
         let result
 
         if (get_data[1] == null) {
+
             result = await get_weather.city_weatger(get_data[0])
         }
         else {
-            result = await get_weather.city_weatger(get_data[0], get_data[1])
+
+            result = await get_weather.town_weatger(get_data[0], get_data[1])
         }
 
         bot.sendMessage(msg.chat.id, result.weather_info, result.button);
@@ -205,6 +210,50 @@ bot.on('callback_query', async function onCallbackQuery(callbackQuery) {
         bot.sendMessage(msg.chat.id, result);
     }
 
+    //重置密碼
+
+    if (callback_text[0] == 're_pas') {
+        const msg = callbackQuery.message;
+
+        if (callback_text[2] == undefined) {
+
+            const button = {
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: '確定', callback_data: 're_pas-' + callback_text[1] + '-yes' }]
+                    ]
+                }
+            }
+            bot.deleteMessage(msg.chat.id, msg.message_id);
+            bot.sendMessage(msg.chat.id, '確定要重置密碼嗎?', button);
+
+        }
+
+        else if (callback_text[2] == "yes") {
+
+            const result = await bind.user_bind_re_pas(msg.chat.id)
+
+
+
+            const text =
+
+                "帳號:" + callback_text[1] + "\n" +
+
+                "新密碼 \n" + result
+
+            bot.deleteMessage(msg.chat.id, msg.message_id);
+            bot.sendMessage(msg.chat.id, text);
+
+        }
+
+
+
+
+
+
+    }
+
+
 
 
 });
@@ -215,28 +264,22 @@ bot.on('callback_query', async function onCallbackQuery(callbackQuery) {
 //綁定
 bot.onText(/(TG@)/, async msg => {
 
-    const result = await bind.user_bind(msg.chat.id, msg.text)
+
+
+    const result = await bind.user_bind(msg.chat.id, msg.text, msg.chat.username)
 
     bot.sendMessage(msg.chat.id, result)
 
 })
 
-/* 
 
-
-bot.onText(/(TG#un_bind)/, async msg => {
-
-    const result = await bind.user_un_bind(msg.chat.id)
-
-    bot.sendMessage(msg.chat.id, result);
-
-})
- */
 
 //獲取訂閱
 bot.onText(/訂閱狀態/, async msg => {
 
     const button = await sub.get_sub(msg.chat.id)
+
+
 
     if (button.reply_markup.inline_keyboard[0] != undefined) bot.sendMessage(msg.chat.id, '以下是你當前訂閱資料', button)
 
@@ -251,20 +294,22 @@ bot.onText(/訂閱狀態/, async msg => {
 //綁定狀態
 bot.onText(/綁定狀態/, async msg => {
 
+    const result = await bind.user_bind_status(msg.chat.id)
 
     const button = {
         reply_markup: {
             inline_keyboard: [
-                [{ text: '解除綁定', callback_data: 'un_bind-' }]
+                [{ text: '解除綁定', callback_data: 'un_bind-' }],
+                [{ text: '重置密碼', callback_data: 're_pas-' + result }],
             ]
         }
     }
 
-    const result = await bind.user_bind_status(msg.chat.id)
+
 
     if (result == '') bot.sendMessage(msg.chat.id, '未綁定')
 
-    else bot.sendMessage(msg.chat.id, `你的TG已和『${result}』`, button)
+    else bot.sendMessage(msg.chat.id, `你的TG已和『${result}』綁定`, button)
 
 
 })
@@ -278,7 +323,13 @@ bot.onText(/北|中|南|東\/外島/, msg => {
 
     const button = other.get_city_button(msg.text)
 
-    bot.sendMessage(msg.chat.id, '北部地區', button)
+    let text = ''
+    new RegExp('ab+c')
+
+    if (msg.text == "東/外島") text = msg.text + "地區"
+    else text = msg.text + "部地區"
+
+    bot.sendMessage(msg.chat.id, text, button)
 
 
 })

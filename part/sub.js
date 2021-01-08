@@ -1,3 +1,5 @@
+/* 處理訂閱相關 */
+
 
 const axios = require('axios');
 
@@ -16,7 +18,7 @@ module.exports = {
 
 
 
-    add_sub: async function (telegram_id, sub_data) {
+    add_sub: async function (telegram_id, sub_data, telegram_username) {
 
 
         sub_data = sub_data.split('-')
@@ -31,7 +33,8 @@ module.exports = {
         if (sub_data[1] == 'undefined') {
             data = {
                 telegram_id: telegram_id,
-                sub_data: sub_data_eng
+                sub_data: sub_data_eng,
+                telegram_username: telegram_username
             }
             sub_data = sub_data[0]
         }
@@ -40,19 +43,27 @@ module.exports = {
         else {
             data = {
                 telegram_id: telegram_id,
-                sub_data: sub_data_eng + '/' + sub_data[1]
+                sub_data: sub_data_eng + '/' + sub_data[1],
+                telegram_username: telegram_username
             }
         }
 
 
 
-        const response = await axios.put(`${api_key.api_url}telegtam/sub`, data)
+        const response = await axios.put(`${api_key.api_url}telegram/sub`, data)
 
-        if (response["data"])
-            return `『${sub_data}』訂閱成功`
+
+
+        if (!response["data"])
+            return `『${sub_data}』訂閱失敗，請在試一次`
+
+        if (response["data"] == "max")
+            return `訂閱失敗，數量已達上限`
 
         else
-            return `『${sub_data}』訂閱失敗，請在試一次`
+            return `『${sub_data} 』訂閱成功`
+
+
     },
 
     delete_sub: async function (telegram_id, sub_data) {
@@ -83,15 +94,15 @@ module.exports = {
         //城市中英
         sub_data[0] = city_json[2][0][sub_data[0]]
 
-        const response = await axios.delete(`${api_key.api_url}telegtam/sub`, { data })
+        const response = await axios.delete(`${api_key.api_url}telegram/sub`, { data })
 
         if (response["data"])
 
-            return `『${sub_data}』訂閱刪除`
+            return `『${sub_data} 』訂閱刪除`
 
 
         else
-            return `『${sub_data}訂閱刪除刪除失敗，請在試一次`
+            return `『${sub_data} 訂閱刪除刪除失敗，請在試一次`
 
 
 
@@ -100,7 +111,9 @@ module.exports = {
 
     get_sub: async function (telegram_id) {
 
-        const response = await axios.get(`${api_key.api_url}telegtam/sub/${telegram_id}`)
+
+        const response = await axios.get(`${api_key.api_url}telegram/sub/${telegram_id}`)
+
 
         if (response['data'] != null) {
 
@@ -136,6 +149,7 @@ module.exports = {
                     inline_keyboard: user_sub
                 }
             }
+
 
 
             return button

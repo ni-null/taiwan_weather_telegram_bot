@@ -1,3 +1,5 @@
+/* 內部調用相關*/
+
 
 
 //資料
@@ -94,7 +96,7 @@ module.exports = {
         child.forEach(e => {
             data.push({
                 text: e.che,
-                callback_data: 'city-' + e.che
+                callback_data: 'get_weather-' + e.che
             })
         }
         );
@@ -111,6 +113,7 @@ module.exports = {
                 inline_keyboard: data_button
             }
         }
+
 
 
         return button
